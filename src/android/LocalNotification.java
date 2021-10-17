@@ -44,6 +44,7 @@ import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CordovaWebView;
+import org.apache.cordova.CordovaWebViewEngine;
 import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -386,19 +387,19 @@ public class LocalNotification extends CordovaPlugin {
         Context context = cordova.getActivity();
 
         switch (task) {
-        case 0:
-            ActionGroup group = ActionGroup.parse(context, id, list);
-            ActionGroup.register(group);
-            command.success();
-            break;
-        case 1:
-            ActionGroup.unregister(id);
-            command.success();
-            break;
-        case 2:
-            boolean found = ActionGroup.isRegistered(id);
-            success(command, found);
-            break;
+            case 0:
+                ActionGroup group = ActionGroup.parse(context, id, list);
+                ActionGroup.register(group);
+                command.success();
+                break;
+            case 1:
+                ActionGroup.unregister(id);
+                command.success();
+                break;
+            case 2:
+                boolean found = ActionGroup.isRegistered(id);
+                success(command, found);
+                break;
         }
     }
 
@@ -530,15 +531,15 @@ public class LocalNotification extends CordovaPlugin {
         }
 
         switch (toast.getType()) {
-        case SCHEDULED:
-            command.success("scheduled");
-            break;
-        case TRIGGERED:
-            command.success("triggered");
-            break;
-        default:
-            command.success("unknown");
-            break;
+            case SCHEDULED:
+                command.success("scheduled");
+                break;
+            case TRIGGERED:
+                command.success("triggered");
+                break;
+            default:
+                command.success("unknown");
+                break;
         }
     }
 
@@ -554,18 +555,18 @@ public class LocalNotification extends CordovaPlugin {
         List<Integer> ids;
 
         switch (type) {
-        case 0:
-            ids = mgr.getIds();
-            break;
-        case 1:
-            ids = mgr.getIdsByType(SCHEDULED);
-            break;
-        case 2:
-            ids = mgr.getIdsByType(TRIGGERED);
-            break;
-        default:
-            ids = new ArrayList<Integer>(0);
-            break;
+            case 0:
+                ids = mgr.getIds();
+                break;
+            case 1:
+                ids = mgr.getIdsByType(SCHEDULED);
+                break;
+            case 2:
+                ids = mgr.getIdsByType(TRIGGERED);
+                break;
+            default:
+                ids = new ArrayList<Integer>(0);
+                break;
         }
 
         command.success(new JSONArray(ids));
@@ -601,21 +602,21 @@ public class LocalNotification extends CordovaPlugin {
         List<JSONObject> options;
 
         switch (type) {
-        case 0:
-            options = mgr.getOptions();
-            break;
-        case 1:
-            options = mgr.getOptionsByType(SCHEDULED);
-            break;
-        case 2:
-            options = mgr.getOptionsByType(TRIGGERED);
-            break;
-        case 3:
-            options = mgr.getOptionsById(toList(ids));
-            break;
-        default:
-            options = new ArrayList<JSONObject>(0);
-            break;
+            case 0:
+                options = mgr.getOptions();
+                break;
+            case 1:
+                options = mgr.getOptionsByType(SCHEDULED);
+                break;
+            case 2:
+                options = mgr.getOptionsByType(TRIGGERED);
+                break;
+            case 3:
+                options = mgr.getOptionsById(toList(ids));
+                break;
+            default:
+                options = new ArrayList<JSONObject>(0);
+                break;
         }
 
         command.success(new JSONArray(options));
@@ -717,7 +718,7 @@ public class LocalNotification extends CordovaPlugin {
         if (view == null) {
             return;
         }
-        
+
         final Activity contextActivity = ((Activity) (view.getContext()));
         if (contextActivity == null) {
             return;
@@ -731,7 +732,7 @@ public class LocalNotification extends CordovaPlugin {
                 if (engine == null) {
                     return;
                 }
-                        
+
                 View engineView = engine.getView();
                 if (engineView == null) {
                     return;
