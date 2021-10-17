@@ -24,7 +24,6 @@
 package de.appplant.cordova.plugin.localnotification;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.KeyguardManager;
 import android.app.NotificationManager;
 import android.content.ActivityNotFoundException;
@@ -32,9 +31,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.PermissionInfo;
 import android.net.Uri;
-import android.os.Bundle;
+import android.os.Build;
 import android.os.PowerManager;
 import android.provider.Settings;
 import android.util.Pair;
@@ -52,8 +50,6 @@ import org.json.JSONObject;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.security.auth.callback.Callback;
 
 import de.appplant.cordova.plugin.notification.Manager;
 import de.appplant.cordova.plugin.notification.Notification;
@@ -713,18 +709,22 @@ public class LocalNotification extends CordovaPlugin {
             return;
         }
 
-        final CordovaWebView view = webView.get();
-        if (view == null) {
+        if (webView.get() == null) {
+            return;
+        }
+
+        final CordovaWebView wv = (CordovaWebView) webView.get().getView();
+        if (wv == null) {
             return;
         }
 
         // Version check from SO answer https://stackoverflow.com/a/33186833/1108174
-        view.post(new Runnable() {
+        ((View) webView.get().getView()).post(new Runnable() {
             public void run() {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                    webView.sendJavascript(js);
+                    wv.sendJavascript(js);
                 } else {
-                    webView.loadUrl("javascript:" + js);
+                    wv.loadUrl("javascript:" + js);
                 }
             }
         });
