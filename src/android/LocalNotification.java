@@ -386,19 +386,19 @@ public class LocalNotification extends CordovaPlugin {
         Context context = cordova.getActivity();
 
         switch (task) {
-        case 0:
-            ActionGroup group = ActionGroup.parse(context, id, list);
-            ActionGroup.register(group);
-            command.success();
-            break;
-        case 1:
-            ActionGroup.unregister(id);
-            command.success();
-            break;
-        case 2:
-            boolean found = ActionGroup.isRegistered(id);
-            success(command, found);
-            break;
+            case 0:
+                ActionGroup group = ActionGroup.parse(context, id, list);
+                ActionGroup.register(group);
+                command.success();
+                break;
+            case 1:
+                ActionGroup.unregister(id);
+                command.success();
+                break;
+            case 2:
+                boolean found = ActionGroup.isRegistered(id);
+                success(command, found);
+                break;
         }
     }
 
@@ -530,15 +530,15 @@ public class LocalNotification extends CordovaPlugin {
         }
 
         switch (toast.getType()) {
-        case SCHEDULED:
-            command.success("scheduled");
-            break;
-        case TRIGGERED:
-            command.success("triggered");
-            break;
-        default:
-            command.success("unknown");
-            break;
+            case SCHEDULED:
+                command.success("scheduled");
+                break;
+            case TRIGGERED:
+                command.success("triggered");
+                break;
+            default:
+                command.success("unknown");
+                break;
         }
     }
 
@@ -554,18 +554,18 @@ public class LocalNotification extends CordovaPlugin {
         List<Integer> ids;
 
         switch (type) {
-        case 0:
-            ids = mgr.getIds();
-            break;
-        case 1:
-            ids = mgr.getIdsByType(SCHEDULED);
-            break;
-        case 2:
-            ids = mgr.getIdsByType(TRIGGERED);
-            break;
-        default:
-            ids = new ArrayList<Integer>(0);
-            break;
+            case 0:
+                ids = mgr.getIds();
+                break;
+            case 1:
+                ids = mgr.getIdsByType(SCHEDULED);
+                break;
+            case 2:
+                ids = mgr.getIdsByType(TRIGGERED);
+                break;
+            default:
+                ids = new ArrayList<Integer>(0);
+                break;
         }
 
         command.success(new JSONArray(ids));
@@ -601,21 +601,21 @@ public class LocalNotification extends CordovaPlugin {
         List<JSONObject> options;
 
         switch (type) {
-        case 0:
-            options = mgr.getOptions();
-            break;
-        case 1:
-            options = mgr.getOptionsByType(SCHEDULED);
-            break;
-        case 2:
-            options = mgr.getOptionsByType(TRIGGERED);
-            break;
-        case 3:
-            options = mgr.getOptionsById(toList(ids));
-            break;
-        default:
-            options = new ArrayList<JSONObject>(0);
-            break;
+            case 0:
+                options = mgr.getOptions();
+                break;
+            case 1:
+                options = mgr.getOptionsByType(SCHEDULED);
+                break;
+            case 2:
+                options = mgr.getOptionsByType(TRIGGERED);
+                break;
+            case 3:
+                options = mgr.getOptionsById(toList(ids));
+                break;
+            default:
+                options = new ArrayList<JSONObject>(0);
+                break;
         }
 
         command.success(new JSONArray(options));
@@ -717,31 +717,37 @@ public class LocalNotification extends CordovaPlugin {
         if (view == null) {
             return;
         }
-        
-        final Activity contextActivity = ((Activity) (view.getContext()));
-        if (contextActivity == null) {
-            return;
-        }
 
-        contextActivity.runOnUiThread(new Runnable() {
+        // Version check from SO answer https://stackoverflow.com/a/33186833/1108174
+        view.post(new Runnable() {
             public void run() {
-                view.loadUrl("javascript:" + js);
-
-                final CordovaWebViewEngine engine = view.getEngine();
-                if (engine == null) {
-                    return;
-                }
-                        
-                View engineView = engine.getView();
-                if (engineView == null) {
-                    return;
-                }
-
-                if (!isInForeground()) {
-                    engineView.dispatchWindowVisibilityChanged(View.VISIBLE);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    webView.sendJavascript(js);
+                } else {
+                    webView.loadUrl("javascript:" + js);
                 }
             }
         });
+
+        // contextActivity.runOnUiThread(new Runnable() {
+        // public void run() {
+        // view.loadUrl("javascript:" + js);
+
+        // final CordovaWebViewEngine engine = view.getEngine();
+        // if (engine == null) {
+        // return;
+        // }
+
+        // View engineView = engine.getView();
+        // if (engineView == null) {
+        // return;
+        // }
+
+        // if (!isInForeground()) {
+        // engineView.dispatchWindowVisibilityChanged(View.VISIBLE);
+        // }
+        // }
+        // });
     }
 
     /**
