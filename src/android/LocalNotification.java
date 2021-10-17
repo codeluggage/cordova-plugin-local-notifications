@@ -32,7 +32,7 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
+//import android.os.Build;
 import android.os.PowerManager;
 import android.provider.Settings;
 import android.util.Pair;
@@ -63,6 +63,8 @@ import static android.os.Build.VERSION.SDK_INT;
 import static android.os.Build.VERSION_CODES.M;
 import static de.appplant.cordova.plugin.notification.Notification.Type.SCHEDULED;
 import static de.appplant.cordova.plugin.notification.Notification.Type.TRIGGERED;
+
+import com.getcapacitor.CapacitorWebView;
 
 /**
  * This plugin utilizes the Android AlarmManager in combination with local
@@ -713,41 +715,20 @@ public class LocalNotification extends CordovaPlugin {
             return;
         }
 
-        final CordovaWebView wv = (CordovaWebView) webView.get().getView();
-        if (wv == null) {
-            return;
-        }
-
-        // Version check from SO answer https://stackoverflow.com/a/33186833/1108174
-        ((View) webView.get().getView()).post(new Runnable() {
-            public void run() {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                    wv.sendJavascript(js);
-                } else {
-                    wv.loadUrl("javascript:" + js);
-                }
+        try {
+            final CapacitorWebView capWebView = (CapacitorWebView) webView.get().getView();
+            if (capWebView == null) {
+                return;
             }
-        });
 
-        // contextActivity.runOnUiThread(new Runnable() {
-        // public void run() {
-        // view.loadUrl("javascript:" + js);
-
-        // final CordovaWebViewEngine engine = view.getEngine();
-        // if (engine == null) {
-        // return;
-        // }
-
-        // View engineView = engine.getView();
-        // if (engineView == null) {
-        // return;
-        // }
-
-        // if (!isInForeground()) {
-        // engineView.dispatchWindowVisibilityChanged(View.VISIBLE);
-        // }
-        // }
-        // });
+            capWebView.post(new Runnable() {
+                public void run() {
+                    capWebView.loadUrl("javascript:" + js);
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
